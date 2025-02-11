@@ -1,0 +1,9 @@
+{
+  "name": "deploy-node-app-to-aws-ec2",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {},
+  "scripts": {
+    "start": "node app.js"
+  }
+}
