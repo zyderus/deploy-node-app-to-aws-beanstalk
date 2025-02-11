@@ -1,5 +1,5 @@
 {
-  "name": "deploy-node-app-to-aws-ec2",
+  "name": "deploy-node-app-to-aws-beanstalk",
   "version": "0.0.1",
   "private": true,
   "dependencies": {},
