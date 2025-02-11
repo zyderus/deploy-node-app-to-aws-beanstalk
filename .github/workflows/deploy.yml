@@ -4,13 +4,15 @@ env:
   APPLICATION_NAME: 'SimpleNodeApp'
   AWS_REGION: 'us-east-1'
   S3_BUCKET_NAME: 'github-zyderus-node-app' # S3 bucket for Beanstalk
-  ENVIRONMENT_NAME: 'SimpleNodeApp-stg' # Replace with your Beanstalk environment name
+  ENVIRONMENT_NAME_STG: 'SimpleNodeApp-stg'
+  ENVIRONMENT_NAME_PROD: 'SimpleNodeApp-prod'
   # DEPLOY_PACKAGE_NAME: 'node-deploy-ver-${{ github.sha }}'
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
   test:
@@ -20,7 +22,7 @@ jobs:
       - name: Prints Hello Message in Testing
         run: echo "Hello World from Testing job"
 
-  deploy:
+  deploy-stg:
     runs-on: ubuntu-latest
     needs: [test]
     permissions:
@@ -64,5 +66,27 @@ jobs:
       - name: Update Beanstalk STG environment
         run: |
           aws elasticbeanstalk update-environment \
-            --environment-name ${{ env.ENVIRONMENT_NAME }} \
+            --environment-name ${{ env.ENVIRONMENT_NAME_STG }} \
             --version-label $GITHUB_SHA
+
+  deploy-prod:
+    runs-on: ubuntu-latest
+    needs: [deploy-stg]
+    environment:
+      name: production # Requires approval via GitHub Environments
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsDeploymentRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Promote to PROD environment
+        run: |
+          aws elasticbeanstalk update-environment \
+            --environment-name ${{ env.ENVIRONMENT_NAME_PROD }} \
+            --version-label $GITHUB_SHA  # Same version as staging
