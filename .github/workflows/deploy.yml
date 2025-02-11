@@ -48,7 +48,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::311141522651:role/GitHubActionsDeploymentRole
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsDeploymentRole
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Upload to S3
@@ -61,7 +61,7 @@ jobs:
             --version-label $GITHUB_SHA \
             --source-bundle S3Bucket=${{ env.S3_BUCKET_NAME }},S3Key=$GITHUB_SHA.zip
 
-      - name: Update Beanstalk environment
+      - name: Update Beanstalk STG environment
         run: |
           aws elasticbeanstalk update-environment \
             --environment-name ${{ env.ENVIRONMENT_NAME }} \
