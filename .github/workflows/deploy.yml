@@ -3,10 +3,9 @@ name: Deploy to Beanstalk
 env:
   APPLICATION_NAME: 'SimpleNodeApp'
   AWS_REGION: 'us-east-1'
-  S3_BUCKET_NAME: 'github-zyderus-node-app' # S3 bucket for Beanstalk
+  S3_BUCKET_NAME: 'github-zyderus-node-app' # S3 bucket for artifacts
   ENVIRONMENT_NAME_STG: 'SimpleNodeApp-stg'
   ENVIRONMENT_NAME_PROD: 'SimpleNodeApp-prod'
-  # DEPLOY_PACKAGE_NAME: 'node-deploy-ver-${{ github.sha }}'
 
 on:
   push:
